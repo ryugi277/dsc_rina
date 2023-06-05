@@ -8,7 +8,7 @@ parameters:
     required: true
     type: file
 consumes:
--multipart/form-data
+  - multipart/form-data
 responses:
     '200':
       description: Successful response
