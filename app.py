@@ -9,7 +9,7 @@ from db import (
     insert_result_to_db, show_cleansing_result,
     insert_upload_result_to_db
 )
-from cleansing_function import text_cleansing, cleansing_files
+from cleansing_function import preprocessing, cleansing_files, text_cleansing, delete_irr_char
 
 # Prevent sorting keys in JSON response
 import flask
@@ -19,6 +19,8 @@ flask.json.provider.DefaultJSONProvider.sort_keys = False
 db_connection = create_connection()
 insert_dictionary_to_db(db_connection)
 db_connection.close()
+
+
 
 # Initialize flask application
 app = Flask(__name__)
@@ -74,11 +76,12 @@ def cleansing_form():
     # Get text from input user
     raw_text = request.form["raw_text"]
     # Cleansing text
-    clean_text = text_cleansing(raw_text)
-    result_response = {"raw_text": raw_text, "clean_text": clean_text}
+    text = preprocessing(raw_text)
+    
+    result_response = {"raw_text": raw_text, "clean_text": text}
     # Insert result to database
     db_connection = create_connection()
-    insert_result_to_db(db_connection, raw_text, clean_text)
+    insert_result_to_db(db_connection, raw_text, text)
     return jsonify(result_response)
 
 # Cleansing text using csv upload
